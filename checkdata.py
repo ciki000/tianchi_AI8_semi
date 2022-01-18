@@ -19,8 +19,8 @@ from PIL import Image
 
 
 
-images_origin = np.load('./datasets/cifar_train1_image.npy')
-images = np.load('./datasets/train1_wasserstein_large_image.npy')
+images_origin = np.load('./datasets/cifar_train3_image.npy')
+images = np.load('./datasets/train3_uap_wideresnet_image.npy')
 # labels_origin = np.load('./datasets/cifar_train2_label.npy')
 # labels = np.load('./datasets/train2_PGD-8_densenet_label.npy')
 # images_origin = images_origin / images_origin.sum(axis=1, keepdims=True)
@@ -46,8 +46,8 @@ for i in showlist:
     # print("!!!")
     #print(classes[np.argmax(labels_origin[i])])
     #print(classes[np.argmax(labels[i])])
-    image_origin.save('./show/train1_'+str(i)+'.png')
-    image.save('./show/train1-w_'+str(i)+'.png')
+    image_origin.save('./show/train3_'+str(i)+'.png')
+    image.save('./show/train3-u_'+str(i)+'.png')
     # print(labels[i])
 print(images.shape)
 # print('origin:', images_origin[0][0][0])

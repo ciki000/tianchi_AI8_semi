@@ -78,11 +78,10 @@ for (input_, soft_label) in tqdm(testloader):
     # break
     wideresnet_output = wideresnet(input_)
     
-    # soft_res = F.softmax(preactresnet_output, dim=1).cpu().detach().numpy()
-    #soft_wide = F.softmax(wideresnet_output, dim=1).cpu().detach().numpy()
+    soft_wide = F.softmax(wideresnet_output, dim=1).cpu().detach().numpy()
 
-    # for i in range(soft_wide.shape[0]):
-    #     SoftLabels.append(soft_wide[i])
+    for i in range(soft_wide.shape[0]):
+        SoftLabels.append(soft_wide[i])
 
     preactresnet_acc = accuracy(preactresnet_output, target)
     wideresnet_acc = accuracy(wideresnet_output, target)
@@ -90,6 +89,7 @@ for (input_, soft_label) in tqdm(testloader):
     preactresnet_accs.update(preactresnet_acc[0].item(), input_.size(0))
     wideresnet_accs.update(wideresnet_acc[0].item(), input_.size(0))
 
-# soft_labels = np.array(SoftLabels)
-# np.save('soft_label.npy', soft_labels)
+soft_labels = np.array(SoftLabels)
+print(soft_labels.shape)
+np.save('soft_label.npy', soft_labels)
 print(preactresnet_accs.avg, wideresnet_accs.avg)

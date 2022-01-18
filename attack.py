@@ -23,8 +23,8 @@ from torchattacks import CW, PGD, DIFGSM, AutoAttack, APGD, Jitter
 
 class MyDataset(torch.utils.data.Dataset):
     def __init__(self, transform):
-        images = np.load('./datasets/cifar_test_image.npy')
-        labels = np.load('./datasets/cifar_test_label.npy')
+        images = np.load('./datasets/cifar_train1_image.npy')
+        labels = np.load('./datasets/cifar_train1_label.npy')
         assert labels.min() >= 0
         assert images.dtype == np.uint8
         assert images.shape[0] <= 50000
@@ -123,7 +123,7 @@ def attack(models, x, y, iter=10, eps=0.001):
     labels = torch.topk(y, 1)[1].squeeze(1)
     
     # atk_preactresnet = CW(norm_preactresnet, c=1, kappa=0, steps=1000, lr=0.01)
-    # atk_preactresnet = PGD(norm_preactresnet, eps=8/255, alpha=1/255, steps=40, random_start=True)
+    atk_preactresnet = PGD(norm_preactresnet, eps=8/255, alpha=1/255, steps=40, random_start=True)
     # atk_preactresnet = DIFGSM(norm_preactresnet, eps=8/255, alpha=2/255, decay=0.0, steps=20, random_start=True)
     # atk_preactresnet = AutoAttack(norm_preactresnet, norm='Linf', eps=8/255, version='standard', n_classes=10, seed=None, verbose=False)
     # atk_preactresnet = APGD(norm_preactresnet, norm='Linf', eps=8/255, steps=100, n_restarts=1, seed=0, loss='ce', eot_iter=1, rho=.75, verbose=False)
@@ -132,12 +132,12 @@ def attack(models, x, y, iter=10, eps=0.001):
     # atk_wideresnet = CW(norm_wideresnet, c=1, kappa=0, steps=1000, lr=0.01)
     # atk_wideresnet = PGD(norm_wideresnet, eps=8/255, alpha=1/255, steps=40, random_start=True)
     # atk_wideresnet = DIFGSM(norm_wideresnet, eps=8/255, alpha=2/255, decay=0.0, steps=20, random_start=True)
-    atk_wideresnet = AutoAttack(norm_wideresnet, norm='Linf', eps=8/255, version='standard', n_classes=10, seed=None, verbose=False)
+    # atk_wideresnet = AutoAttack(norm_wideresnet, norm='Linf', eps=8/255, version='standard', n_classes=10, seed=None, verbose=False)
     # atk_wideresnet = APGD(norm_wideresnet, norm='Linf', eps=8/255, steps=100, n_restarts=1, seed=0, loss='ce', eot_iter=1, rho=.75, verbose=False)
     # atk_wideresnet = Jitter(norm_wideresnet, eps=8/255, alpha=2/255, steps=40, scale=10, std=0.1, random_start=True)
     
-    # adv_images = atk_preactresnet(x, labels)
-    adv_images = atk_wideresnet(x, labels)
+    adv_images = atk_preactresnet(x, labels)
+    # adv_images = atk_wideresnet(x, labels)
     return adv_images
 
 use_cuda = torch.cuda.is_available()
@@ -192,5 +192,5 @@ for (input_, soft_label) in tqdm(testloader):
 images_adv = np.round(np.array(inputs_adv)).astype(np.uint8)
 labels_adv = np.array(labels)
 
-np.save('./datasets/test_Auto_wideresnet_image.npy', images_adv)
-np.save('./datasets/test_Auto_wideresnet_label.npy', labels_adv)
+np.save('./datasets/train1_PGD_preactresnet_image.npy', images_adv)
+np.save('./datasets/train1_PGD_preactresnet_label.npy', labels_adv)
