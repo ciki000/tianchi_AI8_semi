@@ -17,7 +17,7 @@ from PIL import Image
 from utils import load_model, AverageMeter, accuracy
 
 
-datasets = ['./datasets/cifar_train1', './datasets/train2_PGD_preactresnet', './datasets/train3_PGD_wideresnet', './datasets/train4_PGD_preactresnet', './datasets/train5_PGD_wideresnet']
+datasets = ['./datasets/cifar_test', './datasets/train2_PGD_wideresnet', './datasets/train3_PGD_preactresnet', './datasets/train1_PGD_preactresnet', './datasets/train5_PGD_wideresnet']
 # datasets = ['./datasets/cifar_train1', './datasets/train2_PGD-8_densenet', './datasets/train3_PGD-8_resnet', './datasets/train4_PGD-4_densenet', './datasets/train5_PGD-4_resnet']
 images = []
 labels = []
@@ -43,5 +43,5 @@ images_merge = np.array(random_images).astype(np.uint8)
 labels_merge = np.array(random_labels)
 
 print(images_merge.shape, labels_merge.shape)
-np.save('./data.npy', images_merge)
-np.save('./label.npy', labels_merge)
+np.save('../data.npy', images_merge)
+np.save('../label.npy', labels_merge)

@@ -59,10 +59,10 @@ testloader = data.DataLoader(testset, batch_size=64, shuffle=False, num_workers=
 
 # Model
 preactresnet = load_model('preactresnet18').cuda()
-preactresnet.load_state_dict(torch.load('./checkpoints/preactresnet_1.pth')['state_dict'])
+preactresnet.load_state_dict(torch.load('./checkpoints/preactresnet_6.pth')['state_dict'])
 preactresnet.eval()
 wideresnet = load_model('wideresnet').cuda()
-wideresnet.load_state_dict(torch.load('./checkpoints/wideresnet_1.pth')['state_dict'])
+wideresnet.load_state_dict(torch.load('./checkpoints/wideresnet_6.pth')['state_dict'])
 wideresnet.eval()
 
 preactresnet_accs = AverageMeter()

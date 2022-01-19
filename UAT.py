@@ -133,7 +133,8 @@ class UAP(Attack):
 
         return delta
 
-def gen_uap(inputs_adv, labels, ori_inputs):
+def gen_UAP(inputs_adv, labels, ori_inputs):
+    print(inputs_adv.size(), ori_inputs.size())
     UAP = torch.zeros(size=(10,3,32,32)).cuda()
     for idx, image in enumerate(inputs_adv):
         #print(image.size())
@@ -265,15 +266,16 @@ testloader = data.DataLoader(testset, batch_size=256, shuffle=False)
 
 # Model
 preactresnet = load_model('preactresnet18').cuda()
-preactresnet.load_state_dict(torch.load('./checkpoints/preactresnet_train.pth')['state_dict'])
+preactresnet.load_state_dict(torch.load('./checkpoints/preactresnet_4.pth')['state_dict'])
 preactresnet.eval()
 wideresnet = load_model('wideresnet').cuda()
-wideresnet.load_state_dict(torch.load('./checkpoints/wideresnet_train.pth')['state_dict'])
+wideresnet.load_state_dict(torch.load('./checkpoints/wideresnet_4.pth')['state_dict'])
 wideresnet.eval()
 
 preactresnet_accs = AverageMeter()
 wideresnet_accs = AverageMeter()
 inputs_adv = []
+images = []
 labels = []
 cnt = 0
 for (input_, soft_label) in tqdm(testloader):
@@ -284,23 +286,31 @@ for (input_, soft_label) in tqdm(testloader):
     
     delta = attack(models, x, soft_label)
 
-    uap_labels = torch.topk(soft_label, 1)[1].squeeze(1)
-    x = gen_uap(delta, uap_labels, x)
+    # uap_labels = torch.topk(soft_label, 1)[1].squeeze(1)
+    # x = gen_uap(delta, uap_labels, x)
 
 
     inv_normalize = transforms.Normalize((-2.4290657439446366, -2.418254764292879, -2.2213930348258706), (4.9431537320810675, 5.015045135406218, 4.975124378109452))
     for i in range(x.shape[0]):
         #inputs_adv.append(np.clip(inv_normalize(x[i].squeeze()).cpu().detach().numpy().transpose((1,2,0)), 0, 1)*255)
-        inputs_adv.append(np.clip(x[i].squeeze().cpu().detach().numpy().transpose((1,2,0)), 0, 1)*255)
+        inputs_adv.append(delta[i].squeeze().cpu().detach().numpy())
+        images.append(input_[i].squeeze().cpu().numpy())
         labels.append(soft_label[i].squeeze().cpu().numpy())
 
     # cnt = cnt + 1
     # if (cnt >= 100):
     #     break
 
+label_class = torch.topk(torch.tensor(labels).cuda(), 1)[1].squeeze(1)
+x = gen_UAP(torch.tensor(inputs_adv).cuda(), label_class, torch.tensor(images).cuda())
+
+UAP_image = []
+for i in range(x.shape[0]):
+    UAP_image.append(np.clip(x[i].squeeze().cpu().detach().numpy().transpose((1,2,0)), 0, 1)*255)
+
 #images_adv = np.array(inputs_adv).astype(np.uint8)
-images_adv = np.round(np.array(inputs_adv)).astype(np.uint8)
+images_adv = np.round(np.array(UAP_image)).astype(np.uint8)
 labels_adv = np.array(labels)
 
-np.save('./datasets/train3_uap_wideresnet_image.npy', images_adv)
-np.save('./datasets/train3_uap_wideresnet_label.npy', labels_adv)
+np.save('./datasets/train3_CUAT_wideresnet_image.npy', images_adv)
+np.save('./datasets/train3_CUAT_wideresnet_label.npy', labels_adv)

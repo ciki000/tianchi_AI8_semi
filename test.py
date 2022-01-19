@@ -20,8 +20,8 @@ from utils import load_model, AverageMeter, accuracy
 
 class MyDataset(torch.utils.data.Dataset):
     def __init__(self, transform):
-        images = np.load('data.npy')
-        labels = np.load('label.npy')
+        images = np.load('./datasets/test_DIFGSM_wideresnet_image.npy')
+        labels = np.load('./datasets/test_DIFGSM_wideresnet_label.npy')
         assert labels.min() >= 0
         assert images.dtype == np.uint8
         assert images.shape[0] <= 50000
@@ -59,10 +59,10 @@ testloader = data.DataLoader(testset, batch_size=64, shuffle=False, num_workers=
 
 # Model
 preactresnet = load_model('preactresnet18').cuda()
-preactresnet.load_state_dict(torch.load('./checkpoints/preactresnet_1.pth')['state_dict'])
+preactresnet.load_state_dict(torch.load('./checkpoints/preactresnet_7.pth')['state_dict'])
 preactresnet.eval()
 wideresnet = load_model('wideresnet').cuda()
-wideresnet.load_state_dict(torch.load('./checkpoints/wideresnet_1.pth')['state_dict'])
+wideresnet.load_state_dict(torch.load('./checkpoints/wideresnet_7.pth')['state_dict'])
 wideresnet.eval()
 
 preactresnet_accs = AverageMeter()
