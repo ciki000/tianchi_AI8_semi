@@ -26,8 +26,8 @@ from torch.nn.modules.loss import _WeightedLoss, _Loss
 
 class MyDataset(torch.utils.data.Dataset):
     def __init__(self, transform):
-        images = np.load('./datasets/cifar_train3_image.npy')
-        labels = np.load('./datasets/cifar_train3_label.npy')
+        images = np.load('./datasets/cifar_test_image.npy')
+        labels = np.load('./datasets/cifar_test_label.npy')
         assert labels.min() >= 0
         assert images.dtype == np.uint8
         assert images.shape[0] <= 50000
@@ -134,7 +134,7 @@ class UAP(Attack):
         return delta
 
 def gen_UAP(inputs_adv, labels, ori_inputs):
-    print(inputs_adv.size(), ori_inputs.size())
+    #print(inputs_adv.size(), ori_inputs.size())
     UAP = torch.zeros(size=(10,3,32,32)).cuda()
     for idx, image in enumerate(inputs_adv):
         #print(image.size())
@@ -266,10 +266,10 @@ testloader = data.DataLoader(testset, batch_size=256, shuffle=False)
 
 # Model
 preactresnet = load_model('preactresnet18').cuda()
-preactresnet.load_state_dict(torch.load('./checkpoints/preactresnet_4.pth')['state_dict'])
+preactresnet.load_state_dict(torch.load('./checkpoints/preactresnet_train.pth')['state_dict'])
 preactresnet.eval()
 wideresnet = load_model('wideresnet').cuda()
-wideresnet.load_state_dict(torch.load('./checkpoints/wideresnet_4.pth')['state_dict'])
+wideresnet.load_state_dict(torch.load('./checkpoints/wideresnet_train.pth')['state_dict'])
 wideresnet.eval()
 
 preactresnet_accs = AverageMeter()
@@ -312,5 +312,5 @@ for i in range(x.shape[0]):
 images_adv = np.round(np.array(UAP_image)).astype(np.uint8)
 labels_adv = np.array(labels)
 
-np.save('./datasets/train3_CUAT_wideresnet_image.npy', images_adv)
-np.save('./datasets/train3_CUAT_wideresnet_label.npy', labels_adv)
+np.save('./datasets/test_CUAT_wideresnet_image.npy', images_adv)
+np.save('./datasets/test_CUAT_wideresnet_label.npy', labels_adv)

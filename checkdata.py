@@ -20,7 +20,7 @@ from PIL import Image
 
 
 images_origin = np.load('./datasets/cifar_train3_image.npy')
-images = np.load('./datasets/UAT_test.npy')
+images = np.load('./datasets/train3_CUAT_wideresnet_image.npy')
 # labels_origin = np.load('./datasets/cifar_train2_label.npy')
 # labels = np.load('./datasets/train2_PGD-8_densenet_label.npy')
 # images_origin = images_origin / images_origin.sum(axis=1, keepdims=True)
